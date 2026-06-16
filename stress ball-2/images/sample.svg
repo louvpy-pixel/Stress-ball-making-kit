@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
-  <rect width="960" height="540" fill="#eef2ff"/>
-  <rect x="190" y="120" width="580" height="300" rx="28" fill="#22c55e"/>
-  <path d="M300 360L450 180L570 320L650 230L760 360Z" fill="#facc15"/>
-  <text x="480" y="292" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" fill="#111827">Project 2</text>
-</svg>
