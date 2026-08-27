@@ -1533,6 +1533,26 @@ body {
       });
     });
 
+    /* GA4 Event Tracking */
+    function trackGA4Event(eventName, params = {}) {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', eventName, params);
+      }
+    }
+
+    const faqEventNames = {
+      'faq-panel-1': 'glue_not_included',
+      'faq-panel-2': 'seal_stress_ball',
+      'faq-panel-3': 'missing_parts',
+      'faq-panel-4': 'leaking_damaged',
+      'faq-panel-6': 'making_help'
+    };
+
+    const tutorialEventNames = {
+      'tutorial-crunchy-filler.mp4': 'crunchy_filler',
+      'tutorial-slime-clay.mp4': 'slime_clay'
+    };
+
     function openSupportChat() {
       if (window.Tawk_API && typeof window.Tawk_API.maximize === 'function') {
         window.Tawk_API.maximize();
@@ -1556,12 +1576,49 @@ body {
       button.addEventListener('click', openSupportChat);
     });
 
+    document.querySelector('.nav-link-help')?.addEventListener('click', () => {
+      trackGA4Event('support_click', { source: 'header' });
+    });
+
+    document.querySelector('.amazon-mini')?.addEventListener('click', () => {
+      trackGA4Event('amazon_click', { button_location: 'header' });
+    });
+
+    document.querySelector('.btn-secondary[href*="amazon.com"]')?.addEventListener('click', () => {
+      trackGA4Event('amazon_click', { button_location: 'hero' });
+    });
+
+    document.querySelectorAll('[data-chat-trigger]').forEach((button) => {
+      const label = button.textContent.trim();
+      if (label.includes('Chat With Us')) {
+        button.addEventListener('click', () => {
+          const source = button.closest('.faq-support-action') ? 'faq' : 'support_card';
+          trackGA4Event('chat_open', { source });
+        });
+      }
+      if (label.includes('Send Us a Photo')) {
+        button.addEventListener('click', () => {
+          trackGA4Event('photo_help_click', { source: 'support_card' });
+        });
+      }
+    });
+
+    document.querySelectorAll('a[href^="mailto:support@ryoxzel.com"]').forEach((link) => {
+      link.addEventListener('click', () => {
+        const source = link.classList.contains('support-email') ? 'support_email' : 'support_card';
+        trackGA4Event('email_click', { source });
+      });
+    });
+
     document.querySelectorAll('[data-faq-trigger]').forEach((trigger) => {
       trigger.addEventListener('click', () => {
         const item = trigger.closest('.faq-item');
         const isOpen = item.classList.toggle('is-open');
 
         trigger.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen) {
+          trackGA4Event('faq_open', { faq_name: faqEventNames[trigger.getAttribute('aria-controls')] || 'unknown' });
+        }
       });
     });
 
@@ -1592,6 +1649,10 @@ body {
         }
         modal.classList.add('is-visible');
         modal.setAttribute('aria-hidden', 'false');
+        const tutorialName = Object.keys(tutorialEventNames).find((key) => src.includes(key));
+        if (tutorialName) {
+          trackGA4Event('tutorial_play', { tutorial_name: tutorialEventNames[tutorialName] });
+        }
       });
     });
 
